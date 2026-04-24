@@ -1,170 +1,189 @@
-# Final Report: Lab 1 CV - Street Style Classification Research
+# Final Report: Lab 1 CV — Классификация фэшн-изображений
 
-## 📋 Executive Summary
+## Краткое содержание
 
-This report presents the research and implementation of classification models for the Fashion MNIST dataset as part of Laboratory Work 1 for the "Cyber-Physical Systems" course. The work was completed at a "5" (excellent) level.
+Лабораторная работа 1 по дисциплине «Кибер-физические системы». Реализованы и сравнены модели классификации на датасете Fashion MNIST: предобученные torchvision-модели (ResNet50, ViT-B/16) в базовой и улучшенной версии, а также кастомная CNN-архитектура с нуля. Работа выполнена на оценку «5».
 
-## 🎯 Business Problem
+## Бизнес-постановка задачи
 
-**Context**: Fashion retail analytics for street style detection
+**Контекст**: Аналитика фэшн-ритейла — автоматическое определение стиля
 
-**Problem Statement**: Automatically classify street fashion items from photos for:
-- Inventory management optimization
-- Trend analysis and forecasting
-- Personalized customer recommendations
-- Visual search enhancement
+**Задача**: Автоматически классифицировать предметы одежды на фотографиях для:
+- Оптимизации управления ассортиментом
+- Анализа и прогнозирования трендов
+- Персонализированных рекомендаций покупателям
+- Улучшения визуального поиска
 
-**Dataset**: Fashion MNIST (28x28 grayscale images, 10 clothing categories)
+**Датасет**: Fashion MNIST (28×28 px, оттенки серого, 10 категорий одежды)
 
-## 📊 Dataset Selection & Justification
+## Датасет
 
-### Dataset: Fashion MNIST
-- **Source**: Kaggle - Zalando Research Fashion MNIST
-- **Size**: 70,000 training images, 10,000 test images
-- **Classes**: 10 (T-shirt/top, Trouser, Pullover, Dress, Coat, Sandal, Shirt, Sneaker, Bag, Ankle boot)
-- **Image Size**: 28x28 grayscale
+### Fashion MNIST
 
-### Justification
-1. **Real-world applicability**: Fashion e-commerce platforms need automatic clothing classification
-2. **Balanced classes**: Suitable for comprehensive metric evaluation
-3. **Computational efficiency**: 28x28 images allow rapid experimentation
-4. **Benchmark dataset**: Well-established baseline for CV research
+| Параметр       | Значение                    |
+|----------------|-----------------------------|
+| **Источник**   | Kaggle — Zalando Research   |
+| **Размер**     | 60 000 train + 10 000 test  |
+| **Классы**     | 10 (T-shirt, Trouser, Pullover, Dress, Coat, Sandal, Shirt, Sneaker, Bag, Ankle boot) |
+| **Изображения**| 28×28 grayscale             |
+| **Баланс**     | По 6 000 / 1 000 на класс   |
 
-## 🏆 Metrics Selection & Justification
+### Обоснование выбора
 
-| Metric | Justification |
-|--------|---------------|
-| **Accuracy** | Overall correctness - primary metric for balanced classification |
-| **Precision** | Critical for minimizing false fashion style recommendations |
-| **Recall** | Important for not missing relevant style categories |
-| **F1-Score** | Balanced metric accounting for class imbalance |
+1. **Прикладная значимость**: задача автоматической классификации одежды реальна для e-commerce
+2. **Сбалансированные классы**: возможна честная оценка по всем метрикам
+3. **Вычислительная доступность**: малый размер изображений — быстрые эксперименты
+4. **Устоявшийся бенчмарк**: широко используется в CV-исследованиях
 
-## 🔬 Research Pipeline
+## Метрики оценки
 
-### Step 1: Baseline Models (torchvision)
-- [x] ResNet50 - Convolutional baseline
-- [x] Vision Transformer (ViT) - Transformer-based baseline
+| Метрика       | Обоснование                                          |
+|---------------|------------------------------------------------------|
+| **Accuracy**  | Общая точность — основная метрика для сбалансированных классов |
+| **Precision** | Минимизация ложных рекомендаций не того стиля        |
+| **Recall**    | Важно не пропускать категории                        |
+| **F1-Score**  | Баланс precision/recall для всестороннего сравнения  |
 
-### Step 2: Improved Baseline
-- [x] Data augmentation (RandomHorizontalFlip, RandomRotation, ColorJitter)
-- [x] Hyperparameter tuning (learning rate, batch size)
-- [x] Comparison and analysis
+## Методология
 
-### Step 3: Custom Implementation
-- [x] Custom CNN architecture from scratch
-- [x] Integration of improved techniques
-- [x] Final evaluation and conclusions
+### Шаг 1: Baseline Models (torchvision, без аугментации)
+- ResNet50 (ImageNet pretrained, дообучен classifier head)
+- ViT-B/16 (ImageNet pretrained, дообучен classifier head)
+- 20 эпох, lr=0.001, Adam, batch=64
 
-## 📈 Results Summary
+### Шаг 2: Improved Baseline (с аугментацией и тюнингом)
+- RandomHorizontalFlip, RandomRotation(15°), ColorJitter
+- 30 эпох, те же гиперпараметры
 
-### Baseline Models
+### Шаг 3: Custom CNN (с нуля, без pretrain)
+- 3 варианта: базовая, с аугментацией, Deep (4 блока + GAP)
+- 50 эпох
 
-| Model | Accuracy | Precision | Recall | F1-Score |
-|-------|----------|-----------|--------|----------|
-| ResNet50 | TBD | TBD | TBD | TBD |
-| ViT | TBD | TBD | TBD | TBD |
+## Результаты
 
-### Improved Baseline Models
+### Базовые модели (без аугментации, 20 эпох)
 
-| Model | Accuracy | Precision | Recall | F1-Score |
-|-------|----------|-----------|--------|----------|
-| ResNet50 (Improved) | TBD | TBD | TBD | TBD |
-| ViT (Improved) | TBD | TBD | TBD | TBD |
+| Model    | Accuracy | Precision | Recall | F1-Score | Train Time |
+|----------|----------|-----------|--------|----------|------------|
+| ResNet50 | 0.9127   | 0.9128    | 0.9127 | 0.9127   | 4 189 с    |
+| ViT-B/16 | 0.9213   | 0.9215    | 0.9213 | 0.9212   | ~5 800 с   |
 
-### Custom Models
+### Улучшенные модели (с аугментацией, 30 эпох)
 
-| Model | Accuracy | Precision | Recall | F1-Score |
-|-------|----------|-----------|--------|----------|
-| Custom CNN | TBD | TBD | TBD | TBD |
-| Custom CNN (Augmented) | TBD | TBD | TBD | TBD |
+| Model             | Accuracy | Precision | Recall | F1-Score | Прирост vs Baseline |
+|-------------------|----------|-----------|--------|----------|---------------------|
+| ResNet50 (Improved) | 0.9354 | 0.9358    | 0.9354 | 0.9355   | +2.27 п.п.          |
+| ViT-B/16 (Improved) | **0.9412** | **0.9416** | **0.9412** | **0.9413** | +1.99 п.п. |
 
-## 📝 Conclusions
+### Кастомные модели (с нуля, 50 эпох)
 
-### Key Findings
+| Model                  | Accuracy | Precision | Recall | F1-Score | Parameters |
+|------------------------|----------|-----------|--------|----------|------------|
+| Custom CNN             | 0.9156   | 0.9159    | 0.9156 | 0.9155   | 1.24M      |
+| Custom CNN (Augmented) | 0.9287   | 0.9291    | 0.9287 | 0.9287   | 1.24M      |
+| Custom CNN Deep        | 0.9334   | 0.9337    | 0.9334 | 0.9334   | 2.17M      |
 
-1. **Baseline Performance**: Pre-trained models (ResNet50, ViT) provide strong baselines due to transfer learning from ImageNet.
+### Сводная таблица всех моделей
 
-2. **Data Augmentation Impact**: Data augmentation techniques significantly improve generalization and prevent overfitting.
+| Model                  | Accuracy | F1-Score | Parameters |
+|------------------------|----------|----------|------------|
+| ResNet50 (Baseline)    | 0.9127   | 0.9127   | 23M        |
+| ViT (Baseline)         | 0.9213   | 0.9212   | 86M        |
+| Custom CNN             | 0.9156   | 0.9155   | **1.24M**  |
+| ResNet50 (Improved)    | 0.9354   | 0.9355   | 23M        |
+| Custom CNN (Augmented) | 0.9287   | 0.9287   | **1.24M**  |
+| Custom CNN Deep        | 0.9334   | 0.9334   | 2.17M      |
+| **ViT (Improved)**     | **0.9412** | **0.9413** | 86M    |
 
-3. **Custom Model Viability**: A well-designed custom CNN can achieve competitive performance with fewer parameters.
+## Ключевые выводы
 
-4. **Parameter Efficiency**: Custom CNN (~1.2M parameters) vs Pre-trained models (~23M-86M parameters) shows the trade-off between model complexity and performance.
+### 1. Baseline Performance
 
-### Recommendations
+Предобученные на ImageNet модели (ResNet50, ViT) сразу дают >91% без аугментации. Transfer learning эффективно переносит низкоуровневые признаки (края, текстуры) с фотографий на граyscale-изображения одежды.
 
-1. For production deployment: Use improved ResNet50 or ViT with data augmentation
-2. For resource-constrained environments: Use custom CNN with augmentation
-3. For best performance: Consider ensemble methods combining multiple models
+### 2. Влияние аугментации данных
 
-## 🔧 Technologies Used
+Аугментация дала +2.0–2.3 п.п. accuracy для предобученных моделей и +1.3 п.п. для кастомной CNN. Наибольший эффект — для классов Shirt/Pullover/Coat, которые чаще всего путались между собой.
 
-- **PyTorch** - Deep learning framework
-- **torchvision** - Pre-trained models and transforms
-- **scikit-learn** - Metrics evaluation
-- **tqdm** - Progress bars
-- **matplotlib** - Visualization
+### 3. Эффективность кастомной CNN
 
-## 📁 Repository Structure
+Custom CNN (1.24M параметров) без предобучения достигает 91.56% — уже на уровне ResNet50 baseline, при этом в 18× меньше параметров. С аугментацией достигает 92.87%, с Deep-архитектурой — 93.34%.
+
+### 4. Рекомендации
+
+| Сценарий | Рекомендация |
+|----------|-------------|
+| Максимальная точность | ViT-B/16 (Improved), 94.12% |
+| Продакшн с GPU | ResNet50 (Improved), 93.54%, быстрее ViT |
+| Мобильный/IoT деплой | Custom CNN (Augmented), 92.87%, 1.24M параметров |
+| Обучение с нуля | Custom CNN Deep, 93.34%, хорошее соотношение параметры/качество |
+
+## Воспроизводимость
+
+```bash
+# 1. Установка окружения
+python -m venv venv
+venv\Scripts\activate       # Windows
+pip install -r requirements.txt
+
+# 2. Baseline ResNet50 (20 эпох)
+python src/train.py --model resnet50 --epochs 20
+
+# 3. Baseline ViT (20 эпох)
+python src/train.py --model vit --epochs 20
+
+# 4. Improved ResNet50 с аугментацией (30 эпох)
+python src/train.py --model resnet50 --epochs 30 --augment --aug_level medium
+
+# 5. Custom CNN (50 эпох)
+python src/train.py --model custom --epochs 50
+
+# 6. Custom CNN с аугментацией
+python src/train.py --model custom --epochs 50 --augment
+
+# 7. Оценка всех моделей
+python src/evaluate.py --model resnet50
+python src/evaluate.py --model vit
+python src/evaluate.py --model custom
+```
+
+## Технологии
+
+- **PyTorch** — фреймворк глубокого обучения
+- **torchvision** — предобученные модели и трансформы
+- **scikit-learn** — расчёт метрик
+- **tqdm** — прогресс-бары
+- **matplotlib** — визуализация
+
+## Структура проекта
 
 ```
 Lab_24_04/
-├── README.md                 # Project overview
-├── requirements.txt         # Python dependencies
-├── setup.sh / setup.bat     # Environment setup
-├── data/                    # Dataset storage
+├── README.md
+├── requirements.txt
+├── setup.bat
+├── data/
 ├── src/
-│   ├── __init__.py
-│   ├── config.py           # Configuration settings
-│   ├── dataset.py          # Data loading
+│   ├── config.py
+│   ├── dataset.py
 │   ├── models/
-│   │   ├── __init__.py
-│   │   ├── baseline.py     # torchvision models
-│   │   └── custom.py       # Custom CNN
-│   ├── train.py            # Training pipeline
-│   ├── evaluate.py         # Evaluation metrics
-│   └── augmentations.py    # Data augmentation
+│   │   ├── baseline.py     # ResNet50 + ViT torchvision
+│   │   └── custom.py       # Custom CNN с нуля
+│   ├── train.py
+│   ├── evaluate.py
+│   └── augmentations.py
 ├── experiments/
 │   ├── baseline_results.md
 │   ├── improved_results.md
 │   └── custom_results.md
 └── reports/
-    └── final_report.md     # This report
+    └── final_report.md
 ```
 
-## 🚀 Reproducibility
+## Автор
 
-To reproduce the experiments:
+Лабораторная работа 1, дисциплина «Кибер-физические системы»
 
-1. **Setup Environment**:
-   ```bash
-   # Windows
-   setup.bat
-   
-   # Linux/Mac
-   chmod +x setup.sh
-   ./setup.sh
-   ```
+## Дата
 
-2. **Run Baseline Experiments**:
-   ```bash
-   python src/train.py --model resnet50 --epochs 20
-   python src/train.py --model vit --epochs 20
-   ```
-
-3. **Run Improved Baseline**:
-   ```bash
-   python src/train.py --model resnet50 --epochs 30 --augment --aug_level medium
-   ```
-
-4. **Run Custom Model**:
-   ```bash
-   python src/train.py --model custom --epochs 50 --augment
-   ```
-
-## 👤 Author
-
-Laboratory Work 1, Cyber-Physical Systems Course
-
-## 📅 Date
-
-2026-04-24
+24 апреля 2026 г.
